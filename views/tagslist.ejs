@@ -1,0 +1,141 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+	<style>
+		#menu {
+			margin-left: -52px;
+		}
+		#head-btns {
+			padding-top: 5px;
+		}
+		#tag {
+			width: 100px;
+			background-color: #2D312C;
+			color: #fff;
+			text-align: center;
+			padding: 6px;
+			border-radius: 4px;
+			box-shadow: 1px 1px 1px #2D312C, -1px -1px 1px #2D312C;
+		}
+		#refresh {
+			background-color: #2D312C;
+			width: 100px;
+			font-size: 18px;
+			padding: 6px;
+			text-align: center;
+			float: right;
+			cursor: pointer;
+		}
+		#table {
+			width: 95%;
+			float: left;
+			margin: 10px;
+		}
+		.actions-btn {
+			width: 35px;
+			height: 35px;
+			margin: 5px 5px 0;
+			padding: 5px;
+		}
+		.actions-btn span {
+			color: #fff;
+			font-size: 15px;
+			width: auto;
+			margin: 0;
+			box-sizing: initial;
+		}
+	</style>
+</head>
+<body>
+	<% include partials/menu.html %>
+	<% include partials/modal.html %>
+	<div id="table">
+		<div id="head-btns">
+			<span id="tag">Tags List</span>
+			<span id="refresh" class="fa fa-refresh">Refresh</span>
+		</div>
+		<table id="myTable" class="display">
+			<thead>
+	        <tr>
+	            <th>Tag Name</th>
+	            <th>Created By</th>
+	            <th>Create Date</th>
+	            <th>Action</th>
+	        </tr>
+	    </thead>
+	    <tbody id="tbody">
+	    	<% data.forEach(function(tag) { %>
+        	<tr>
+	            <td><%=tag.name%></td>
+	            <td><%=tag.creator%></td>
+	            <td><%=tag.creationdate%></td>
+	            <td><center class="action"></center></td>
+	        </tr>
+	        <% })%>
+	    </tbody>
+		</table>
+	</div>
+</body>
+<script src="/js/script.js"></script>
+<script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+<script>
+	var refreshBtn = document.getElementById("refresh");
+	refreshBtn.addEventListener("click", function () {
+		window.location.reload();
+	})
+	var tbody = document.getElementById("tbody");
+	var dbData = <%- JSON.stringify(data) %>
+	sideBtns[6].classList.add("active");
+	$(document).ready( function () {
+    	$('#myTable').DataTable();
+	});
+	var tags = document.getElementsByClassName("action");
+	for(var i = 0;i<tags.length;i++) {
+		var btn = document.createElement("button");
+		btn.classList.add("actions-btn", "btn", "btn-dark");
+		var span = document.createElement("span");
+		span.classList.add("fa", "fa-trash");
+		btn.appendChild(span);
+		btn.setAttribute("id", dbData[i]._id);
+		btn.addEventListener("click", function (event) {
+			$.confirm({
+		    title: 'Delete User!',
+		    content: 'Are you sure you want to delete!',
+		    buttons: {
+		    	'YES': {
+		    		btnClass: "btn btn-success",
+		    		action: function () {
+		    			var req = new XMLHttpRequest();
+		    			req.open("POST", "/deleteTag");
+		    			req.setRequestHeader("Content-Type", "application/json");
+		    			req.send(JSON.stringify({id: event.target.getAttribute("id")}));
+		    			req.onload = function () {
+		    				if(req.responseText == "deleted") {
+			    				tbody.removeChild(event.target.parentNode.parentNode.parentNode);
+		    				}	
+		    			}
+		    		}
+		    	}, 
+		    	'NO' : {
+		    		btnClass: "btn btn-danger"
+		    	}
+		    }
+		});
+		})
+		
+		tags[i].appendChild(btn);
+	}
+</script>
+</html>

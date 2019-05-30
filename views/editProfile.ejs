@@ -1,0 +1,213 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+	<style>
+		
+		.main {
+			width: 80%;
+			box-shadow: 0 10px 20px -12px #000;
+			margin: 0 auto;
+			margin-top: 3%;
+			padding: 2%;
+			background-color: #fff;
+			margin-bottom: 5%;
+		}
+		.img {
+			width: 160px;
+			background-color: #fff;
+			margin: 20px;
+			padding: 5px;
+			box-shadow: 1px 1px 10px gray, -1px -1px 10px gray;
+		}
+		#home-avtar {
+			width: 150px;
+			height: 150px;
+		}
+		button {
+			color: white;
+		}
+		#changePass {
+			background-color: #fab448;
+			width: 150px;
+			height: 35px;
+			border: none;
+		}
+		#update {
+			background-color: #347fc1;
+			width: 80px;
+			height: 35px;
+			border: none;
+			float: right;
+			margin-right: 5px;
+		}
+		#cancel {
+			border: none;
+			width: 80px;
+			height: 35px;
+			background-color: #ea5b5b;
+			float: right;
+		}
+		.form-group {
+			border: 1px solid lightgrey;
+			margin: 10px;
+			border-radius: 5px;
+		}
+		.form-group:hover {
+			box-shadow: 2px 2px 10px #F5F5F5, -3px -3px 10px #F5F5F5;	
+		}
+		.heading {
+			background-color: #F5F5F5;
+			height: 40px;
+			font-size: 18px;
+			line-height: 40px;
+			padding-left: 15px;
+		}
+		.content {
+			padding: 20px;
+		}
+		#date {
+			margin-top: 1%;
+			width: 50%;
+			display: inline-block;
+		}
+		#gender {
+			margin-top: 1%;
+			width: 49.5%;
+			display: inline-block;
+		}
+		#img-div {
+			position: relative;
+		}
+		#file-input {
+			width: 95px;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			display: none;
+			color: transparent;
+		}
+		#img-div:hover #file-input{
+			display: block;
+		}
+		@media(max-width: 458px) {
+			nav {
+				height: 70px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<% include partials/menu.html %>
+	<% include partials/modal.html %>
+	<div class="main">
+		<div class="img" id="img-div">
+			<img id="home-avtar" src="img/avtar.png" alt="">
+			<input type="file" id="file-input">
+		</div>
+		<div class="form-group">
+			<div class="heading">Basic Info</div>
+			<div class="content">
+				<label for="exampleFormControlSelect1">Email: </label>
+				<input type="email" class="form-control" placeholder="Email" id="email" >
+				<label for="exampleFormControlSelect1">Name: </label>
+				<input class="form-control" placeholder="Name" id="name" >
+				<div id="date">
+					<label for="exampleFormControlSelect1">DOB: </label>
+					<input class="form-control" name="date" id="date">
+				</div>
+				<div  id="gender">
+					<label for="exampleFormControlSelect1">Gender: </label>
+					<select class="form-control" id="gender">
+						<option value="">Male</option>
+						<option value="">Female</option>
+						<option value="">Transgender</option>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="heading">Contact Info</div>
+			<div class="content">
+				<label for="exampleFormControlSelect1">Phone: </label>
+				<input type="text" class="form-control" placeholder="1235468790" id="phone">
+				<label for="exampleFormControlSelect1">City: </label>
+				<input type="text" class="form-control" placeholder="Abhr" id ="city">
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="heading">Personal Info</div>
+			<div class="content">
+				<label for="exampleFormControlSelect1">Interests: </label>
+				<input type="text" class="form-control">
+				<label for="exampleFormControlSelect1">Tell us a bit more about your journey: </label>
+				<textarea class="form-control" id="exampleFormControlTextarea1" cols="30" rows="3"></textarea>
+				<label for="exampleFormControlTextarea1">What are your expectations from the communities?</label>
+				<textarea class="form-control" id="exampleFormControlTextarea1" cols="30" rows="3"></textarea>
+			</div>
+		</div>
+		<button id="changePass">Change Password</button>
+		<button id="cancel">Cancel</button>
+		<button id="update">Update</button>
+	</div>
+</body>
+<script src="js/script.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+<script>
+    var changePass = document.getElementById("changePass");
+    var cancel = document.getElementById("cancel");
+    var updateBtn = document.getElementById("update");
+    var email = document.getElementById("email");
+    var phone = document.getElementById("phone");
+    var dateInput = document.getElementById("date");
+    var gender = document.getElementById("gender");
+    var nameInput = document.getElementById("name");
+    var city = document.getElementById("city");
+    var fileInput = document.getElementById("file-input");
+	document.getElementById("file-input").addEventListener("change", function () {
+		console.log(document.getElementById("file-input").value)
+	})
+	
+    $(document).ready(function(){
+      var date_input=$('input[name="date"]'); //our date input has the name "date"
+      var container="body";
+      var options={
+        format: 'mm/dd/yyyy',
+        container: container,
+        todayHighlight: true,
+        autoclose: true,
+      };
+      date_input.datepicker(options);
+    });
+    changePass.addEventListener("click", function() {
+    	window.location = "/changePassword";
+    })
+    cancel.addEventListener("click", function () {
+    	window.location = "/profile";
+    })
+    updateBtn.addEventListener("click",function () {
+    	var req = new XMLHttpRequest();
+    	req.open("POST", "/editProfile")
+    	req.setRequestHeader("Content-Type", "application/json");
+    	req.setRequestHeader("Authorization", 'multipart/form-data');
+    	var data = new Object({
+    		email: email.value,
+    		phoneno: phone.value,
+    		dob: dateInput.value,
+    		gender: gender.value,
+    		name: nameInput.value,
+    		city: city.value,
+    		imgpath: fileInput.value,
+    	});
+    	req.send(JSON.stringify(data));
+    })
+</script>
+</html>

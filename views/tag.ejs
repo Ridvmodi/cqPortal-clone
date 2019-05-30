@@ -1,0 +1,96 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>CQ</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+	<style>
+		#main {
+			float: left;
+			width: 50%;
+			box-shadow: 3px 3px 10px gray, -3px -3px 10px gray;
+			position: relative;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			padding: 20px;
+		}
+		#menu {
+			margin-left: -52px;
+		}
+		button {
+			border: none;
+			height: 35px;
+		}
+		h3 {
+			opacity: .5;
+		}
+		#btn {
+			width: 100%;
+			background-color: #4d87b7;
+		}
+		#btn:hover {
+			background-color: #286090;
+		}
+		#tag {
+			background-color: #eaac54;
+			position: relative;
+			left: 50%;
+			transform: translateX(-50%);
+		}
+		#tag:hover {
+			background-color: #EC971F;
+		}
+	</style>
+</head>
+<body>
+	<% include partials/menu.html %>
+	<div id="main">
+		<h3>Create Tag</h3>
+		<hr>
+		<input type="text" class="form-control" placeholder="Tag Name" id="tagInput">
+		<br>
+		<button id="btn">Submit</button>
+		<br>
+		<br>	
+		<button id="tag">Tag Lists</button>
+	</div>
+	<% include partials/modal.html %>
+</body>
+<script src="js/script.js"></script>
+<script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+<script>
+	var dateObject = new Date();
+	sideBtns[6].classList.add("active");
+	var btn = document.getElementById("tag");
+	btn.addEventListener("click", function() {
+		window.location = "/tag/tagslist"
+	});
+	var submitBtn = document.getElementById("btn");
+	var input = document.getElementById("tagInput");
+	submitBtn.addEventListener("click", function () {
+		var request = new XMLHttpRequest();
+		request.open("POST", "/tag");
+		request.setRequestHeader("Content-Type", "application/json");
+		var dateString = dateObject.getDate() + "-" + dateObject.getMonth() + "-" + dateObject.getFullYear() + "  ( " + dateObject.getHours() + ":" + dateObject.getMinutes();
+		if(dateObject.getHours() > 12) {
+			dateString += "PM )";
+		} else {
+			dateString += "AM )";
+		}
+		var data = new Object({
+			name: input.value,
+			creationdate: dateString,
+			creator: "Ridhav",
+			flag: "1",
+		});
+		request.send(JSON.stringify(data));
+	})
+</script>
+</html>

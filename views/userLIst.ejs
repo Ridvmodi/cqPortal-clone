@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>CQ</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+	<link rel="stylesheet" href="css/trumbowyg.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+	<style>
+		#menu {
+			margin-left: -52px;
+		}
+		#table {
+			width: 95%;
+			float: left;
+			margin: 10px;
+		}
+		#tag {
+			width: 100px;
+			background-color: #2D312C;
+			color: #fff;
+			text-align: center;
+			padding: 6px;
+			border-radius: 4px;
+			box-shadow: 1px 1px 1px #2D312C, -1px -1px 1px #2D312C;
+		}
+		#refresh {
+			background-color: #2D312C;
+			width: 100px;
+			font-size: 18px;
+			padding: 6px;
+			text-align: center;
+			float: right;
+			cursor: pointer;
+		}
+		#head-btns {
+			padding-top: 5px;
+		}
+		#filter {
+			width: 150px;
+			background-color: #2D312C;
+			color: white;
+			height: 35px;
+			border-radius: 5px;
+			padding-left: 10px;
+			margin-right: 10px;
+			float: right;
+		}
+		#role {
+			background-color: #2D312C;
+			width: 200px;
+			color: white;
+			height: 35px;
+			padding-left: 10px;
+			border-radius: 5px;
+			float: right;
+		}
+		.actions-btn {
+			width: 35px;
+			height: 35px;
+			margin: 5px 5px 0;
+			padding: 5px;
+		}
+		.actions-btn span {
+			color: #fff;
+			font-size: 15px;
+			width: auto;
+			margin: 0;
+			box-sizing: initial;
+		}
+	</style>
+</head>
+<body >
+	<% include partials/menu.html %>
+	<div class="modal fade" tabindex="-1" role="dialog" id="editModal">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+			  <div class="modal-header">
+			    <h5 class="modal-title" id="usernameTitle">Update </h5>
+			    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			      <span aria-hidden="true">&times;</span>
+			    </button>
+			  </div>
+			  <div class="modal-body">
+			    <form>
+			    	<div class="form-group row">
+			    		<label class="col-sm-2 col-form-label"><b>Username: </b></label>
+			    		<div class="col-sm-10">
+			    			<input type="text" class="form-control" id="editUserName">
+			    		</div>
+			    	</div>
+			    	<div class="form-group row">
+			    		<label class="col-sm-2 col-form-label"><b>Phone: </b></label>
+			    		<div class="col-sm-10">
+			    			<input type="text" class="form-control" id="editPhoneNo">
+			    		</div>
+			    	</div>
+			    	<div class="form-group row">
+			    		<label class="col-sm-2 col-form-label"><b>City: </b></label>
+			    		<div class="col-sm-10">
+			    			<input type="text" class="form-control" id="editCity">
+			    		</div>
+			    	</div>
+			    	<div class="form-group row">
+			    		<label class="col-sm-2 col-form-label"><b>Status: </b></label>
+			    		<div class="col-sm-10">
+			    			<select class="form-control" id="editStatus">
+			    				<option>Confirmed</option>
+			    				<option>Pending</option>
+			    			</select>
+			    		</div>
+			    	</div>
+			    	<div class="form-group row">
+			    		<label class="col-sm-2 col-form-label"><b>Role: </b></label>
+			    		<div class="col-sm-10">
+			    			<select class="form-control" id="editRole">
+			    				<option>User</option>
+			    				<option>Community Builder</option>
+			    				<option>Admin</option>
+			    			</select>
+			    		</div>
+			    	</div>
+			    	<div class="form-group row">
+			    		<div class="col-sm-10">
+			    			<button type="button" class="btn btn-secondary" id="updateBtn">Update</button>
+			    		</div>
+			    	</div>
+			    </form>
+			  </div>
+			  <div class="modal-footer">
+			    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			  </div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" tabindex="-1" role="dialog" id="emailModal">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+			  <div class="modal-header">
+			    <h5 class="modal-title">Send Reminder Mail</h5>
+			    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			      <span aria-hidden="true">&times;</span>
+			    </button>
+			  </div>
+			  <div class="modal-body">
+			    <form>
+			    	<div class="form-group row">
+			    		<label class="col-sm-2 col-form-label"><b>To: </b></label>
+			    		<div class="col-sm-10">
+			    			<input type="text" readonly class="form-control" id="sendTo">
+			    		</div>
+			    	</div>
+			    	<div class="form-group row">
+			    		<label class="col-sm-2 col-form-label"><b>Subject: </b></label>
+			    		<div class="col-sm-10">
+			    			<input type="text" class="form-control" value="(This mail is from CQ)" id="emailSubject">
+			    		</div>
+			    	</div>
+			    	<div class="form-group row">
+			    		<div class="col-12">
+			    			<textarea style="resize: none;" cols="30" rows="10" class="form-control" id="textarea" ></textarea>
+			    		</div>
+			    	</div>
+			    </form>
+			  </div>
+			  <div class="modal-footer">
+			    <button type="button" class="btn btn-secondary" id="sendMail" data-dismiss="modal">Send</button>
+			  </div>
+			</div>
+		</div>
+	</div>
+	<div id="table">
+		<div id="head-btns">
+			<span id="tag">User List</span>
+			<select id="role">
+				<option value="All">All</option>
+				<option value="Admins">Admins</option>
+				<option value="Users">Users</option>
+				<option value="Community Builder">Community Builder</option>
+			</select>
+			<select id="filter">
+				<option value="All">All</option>
+				<option value="Pending">Pending</option>
+				<option value="Confirmed">Confirmed</option>
+			</select>
+			<span id="refresh" class="fa fa-refresh">Refresh</span>
+		</div>
+		<table id="myTable" class="display">
+			<thead>
+		        <tr>
+		            <th>Username/Email</th>
+		            <th>Phone</th>
+		            <th>City</th>
+		            <th>Status</th>
+		            <th>Role</th>
+		            <th>Actions</th>
+		        </tr>
+		    </thead>
+	    <tbody>
+        	<!-- <% data.forEach(function(user) { %>
+        	<tr>
+	            <td><%=user.email%></td>
+	            <td><%=user.phoneno%></td>
+	            <td><%=user.city%></td>
+	            <td><%=user.status %></td>
+	            <td class="role"><%=user.role%></td>
+	            <td><center class="actions"></center></td>
+	        </tr>
+	        <% })%> -->
+	    </tbody>
+		</table>
+	</div>
+	<% include partials/modal.html%>
+</body>
+<script src="js/script.js"></script>
+<script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+  <script src="js/trumbowyg.min.js"></script>
+<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+<script>
+	var asc = <%-  JSON.stringify(data) %>;
+	var state;
+	sideBtns[3].classList.add("active");
+	$(document).ready(function() {
+		$.ajax({
+			url: initTable(),
+			success: function () {
+				appendBtns();
+			}
+		});
+	});
+	function initTable() {
+		$('#myTable').DataTable({
+			"processing": true,
+			"serverSide": true,
+			"ajax": {
+				"url": "/getUserData",
+				"type": "POST", 
+			},
+			"columns": [
+				{ "data" : "name" },
+				{ "data" : "email" },
+				{ "data" : "city" },
+				{ "data" : "status" },
+				{ "data" : "role",
+				  "class": "role" },
+				{ "data" : null },
+			],
+			"columnDefs": [{
+                "targets": -1,
+                "render": function (data, type, row, meta) {
+                   data = '<center class="actions"></center>';
+               		return data;
+                }
+            }],
+		});
+	}
+	function appendBtns() {
+		var actionsCol = document.getElementsByClassName("actions");
+		var roleCol = document.getElementsByClassName("role");
+		var refreshBtn = document.getElementById("refresh");
+		var sendToInput = document.getElementById("sendTo");
+		var emailSubject = document.getElementById("emailSubject");
+		var emailSendBtn = document.getElementById("sendMail");
+		refreshBtn.addEventListener("click", function () {
+			window.location.reload();
+		})
+		for(var i = 1;i<roleCol.length;i++ ) {
+			state = asc[i-1].flag;
+			if(roleCol[i].innerHTML == "admin" || roleCol[i].innerHTML == "user") {
+				let emailBtn = document.createElement("button");
+				let editBtn = document.createElement("button");
+				let stateBtn = document.createElement("button");
+				let usernameTitle = document.getElementById("usernameTitle");
+				let span = document.createElement("span");
+				emailBtn.classList.add("actions-btn", "btn", "btn-dark");
+				editBtn.classList.add("actions-btn", "btn", "btn-primary");
+				editBtn.setAttribute("id", "edit" + asc[i - 1]._id);
+				editBtn.addEventListener("click", function () {
+					$('#editModal').modal();
+					var id;
+					if(event.target.tagName == "SPAN")
+						id = event.target.parentNode.getAttribute("id");
+					else
+						id = event.target.getAttribute("id");
+					for(var j = 0;j<asc.length;j++) {
+						if(("edit" + asc[j]._id) == id) {
+							usernameTitle.innerHTML += asc[j].email;		
+						}
+					}
+					var editUserName = document.getElementById("editUserName");
+					var editCity = document.getElementById("editCity");
+					var editStatus = document.getElementById("editStatus");
+					var editRole = document.getElementById("editRole");
+					var editPhoneNo = document.getElementById("editPhoneNo");
+					var updateBtn = document.getElementById("updateBtn");
+					updateBtn.addEventListener("click", function () {
+						var data = new Object({
+							name: editUserName.value,
+							city: editCity.value,
+							phoneno: editPhoneNo.value,
+							role: editRole.value,
+							status: editStatus.value,
+						});
+						var request = new XMLHttpRequest();
+						request.open("POST", "/updateUser");
+						request.setRequestHeader("Content-Type", "application/json");
+						request.send(JSON.stringify(data));	
+						$('#editModal').modal("hide");
+					})
+					setInterval(function () {
+						if(($("#editModal").hasClass('show')) == false) {
+							usernameTitle.innerHTML = "Update ";
+						}	
+					}, 1000);
+					
+				});
+				emailBtn.setAttribute("id", "email" + asc[i - 1]._id);
+				emailBtn.addEventListener("click", function (event) {
+					$("#emailModal").modal();
+					var id;
+					if(event.target.tagName == "SPAN")
+						id = event.target.parentNode.getAttribute("id");
+					else
+						id = event.target.getAttribute("id");
+					for(var j = 0;j<asc.length;j++) {
+						if(("email" + asc[j]._id) == id) {
+							sendToInput.value = asc[j].email;		
+						}
+					}
+					$.trumbowyg.svgPath = "/css/trumbowyg.svg"
+					$("#textarea").trumbowyg();
+					emailSendBtn.addEventListener("click", function () {
+						var data = new Object({
+							to: sendTo.value,
+							from: "ridhavrm@gmail.com",
+							subject: emailSubject.value,
+							text: $('#textarea').val(),
+						});
+						var req = new XMLHttpRequest();
+						req.open("POST", "/sendMail");
+						req.setRequestHeader("Content-Type", "application/json");
+						req.send(JSON.stringify(data));
+					})
+				});
+				
+				stateBtn.setAttribute("id", asc[i - 1]._id);
+				stateBtn.addEventListener("click", function (event) {
+					if(state == "0") {
+						stateBtn.classList.remove("btn-warning");
+						stateBtn.classList.add("actions-btn", "btn", "btn-success");
+						stateBtn.childNodes[0].classList.remove("fa", "fa-times-circle");
+						stateBtn.childNodes[0].setAttribute("class", "fa fa-check-circle");
+						state = "1";
+					} else {
+						stateBtn.classList.remove("btn-success");
+						stateBtn.classList.add("actions-btn", "btn", "btn-warning");	
+						stateBtn.childNodes[0].classList.remove("fa", "fa-check-circle");
+						stateBtn.childNodes[0].setAttribute("class", "fa fa-times-circle");
+						state = "0";
+					}	
+					var id;
+					if(event.target.tagName == "SPAN")
+						id = event.target.parentNode.getAttribute("id");
+					else
+						id = event.target.getAttribute("id");
+					var req = new XMLHttpRequest();
+					req.open("POST", "/updateState");
+					req.setRequestHeader("Content-Type", "application/json");
+					req.send(JSON.stringify({id: id, state: state}));
+					window.location.reload();
+				})
+				if(state == "0") {
+					stateBtn.classList.add("actions-btn", "btn", "btn-success");	
+					span.setAttribute("class", "fa fa-check-circle");	
+				} else {
+					stateBtn.classList.add("actions-btn", "btn", "btn-warning");	
+					span.setAttribute("class", "fa fa-times-circle");
+				}
+				stateBtn.appendChild(span); 
+				span = document.createElement("span");
+				span.setAttribute("class", "fa fa-envelope");
+				emailBtn.appendChild(span);
+				span = document.createElement("span");
+				span.setAttribute("class", "fa fa-edit");
+				editBtn.appendChild(span);
+				actionsCol[i - 1].appendChild(emailBtn);
+				actionsCol[i - 1].appendChild(editBtn);
+				actionsCol[i - 1].appendChild(stateBtn);
+			} else if( roleCol[i].innerHTML == "superadmin") {
+				var emailBtn = document.createElement("button");
+				emailBtn.classList.add("actions-btn", "btn", "btn-dark");
+				emailBtn.setAttribute("id", "email" + asc[i - 1]._id);
+				emailBtn.addEventListener("click", function (event) {
+					$("#emailModal").modal();
+					var id;
+					if(event.target.tagName == "SPAN")
+						id = event.target.parentNode.getAttribute("id");
+					else
+						id = event.target.getAttribute("id");
+					for(var j = 0;j<asc.length;j++) {
+						if(("email" + asc[j]._id) == id) {
+							sendToInput.value = asc[j].email;		
+						}
+					}
+					
+					$.trumbowyg.svgPath = "/css/trumbowyg.svg"
+					$("#textarea").trumbowyg();
+					emailSendBtn.addEventListener("click", function () {
+						var data = new Object({
+							to: sendTo.value,
+							from: "ridhavrm@gmail.com",
+							subject: emailSubject.value,
+							text: $("#textarea").val(),
+						});
+						var req = new XMLHttpRequest();
+						req.open("POST", "/sendMail");
+						req.setRequestHeader("Content-Type", "application/json");
+						req.send(JSON.stringify(data));
+					})
+				});
+				var span = document.createElement("span");
+				span.setAttribute("class", "fa fa-envelope");
+				emailBtn.appendChild(span);
+				actionsCol[i - 1].appendChild(emailBtn);
+			}
+		}
+	}
+</script>
+</html>

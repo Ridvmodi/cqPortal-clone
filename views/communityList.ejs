@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>CQ</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+	<style>
+		#menu {
+			margin-left: -52px;
+		}
+		#table {
+			width: 95%;
+			float: left;
+			margin: 10px;
+		}
+		#tag {
+			width: 100px;
+			background-color: #2D312C;
+			color: #fff;
+			text-align: center;
+			padding: 6px;
+			border-radius: 4px;
+			box-shadow: 1px 1px 1px #2D312C, -1px -1px 1px #2D312C;
+		}
+		#refresh {
+			background-color: #2D312C;
+			width: 100px;
+			font-size: 18px;
+			padding: 6px;
+			text-align: center;
+			float: right;
+			cursor: pointer;
+		}
+		#head-btns {
+			padding-top: 5px;
+		}
+		#filter {
+			width: 150px;
+			background-color: #2D312C;
+			color: white;
+			height: 35px;
+			border-radius: 5px;
+			padding-left: 10px;
+			margin-right: 10px;
+			float: right;
+		}
+	</style>
+</head>
+<body>
+	<% include partials/menu.html %>
+	<div id="table">
+		<div id="head-btns">
+			<span id="tag">Community List</span>
+			<select id="filter">
+				<option value="All">All</option>
+				<option value="Pending">Direct</option>
+				<option value="Confirmed">Permission</option>
+			</select>
+			<span id="refresh" class="fa fa-refresh">Refresh</span>
+		</div>
+		<table id="myTable" class="display">
+			<thead>
+	        <tr>
+	            <th>Community Name</th>
+	            <th>Membership Rule</th>
+	            <th>Community Location</th>
+	            <th>Community Owner</th>
+	            <th>Create Date</th>
+	            <th>Actions</th>
+	            <th>Community Pic</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	        <tr>
+	            <td>Row 1 Data 1</td>
+	            <td>Row 1 Data 2</td>
+	            <td>Row 1 Data 1</td>
+	            <td>Row 1 Data 2</td>
+	            <td>Row 1 Data 1</td>
+	            <td>Row 1 Data 2</td>
+	            <td>Row 1 Data 1</td>
+	        </tr>
+	        <tr>
+	            <td>Row 2 Data 1</td>
+	            <td>Row 2 Data 2</td>
+	            <td>Row 2 Data 1</td>
+	            <td>Row 2 Data 2</td>
+	            <td>Row 2 Data 1</td>
+	            <td>Row 2 Data 2</td>
+	            <td>Row 2 Data 1</td>
+	        </tr>
+	    </tbody>
+		</table>
+	</div>
+	<% include partials/modal.html %>
+</body>
+<script src="js/script.js"></script>
+<script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+<script>
+	sideBtns[4].classList.add("active");
+	$(document).ready( function () {
+    	$('#myTable').DataTable();
+	});
+</script>
+</html>
