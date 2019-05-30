@@ -4,7 +4,9 @@ var session = require('express-session')
 var mailer = require('nodemailer')
 var multer = require('multer')
 var passport = require('passport')
+var passportGithub = require('passport-github')
 var mongoDb = 'mongodb://localhost/webProject'
+var GithubStrategy = passportGithub.Strategy;
 var app = express();
 var path = require('path')
 app.use(express.urlencoded({extended: true}));
@@ -12,6 +14,23 @@ app.use(express.static(path.join(__dirname,'public')));
 app.use(express.json())
 app.use(session({secret: "webProject"}))
 app.set('view engine', 'ejs')
+app.use(passport.initialize());
+app.use(passport.session());
+passport.serializeUser(function(user, done) {
+	done(null, user);
+})
+passport.deserializeUser(function(user, done) {
+	done(null, user);
+})
+passport.use(new GithubStrategy({
+		clientID: "5ab282b850e2ccabe36e",
+		clientSecret: "7f2c6dcf973b21fc822832649422dcff0c63fa6d",
+		callbackURL: "http://localhost:8000/auth/github/callback"
+	},
+	function(accessToken, refershToken, profile, callback) {
+		return callback(null, profile);
+	}
+));
 
 var middleFunc = function (request, response, next) {
 	if(request.session.isLogin) {
@@ -22,6 +41,15 @@ var middleFunc = function (request, response, next) {
 		response.send();
 	}
 }
+app.get('/auth/github', passport.authenticate('github'))
+app.get('/auth/github/callback',passport.authenticate('github', { failureRedirect: '/' }),
+		function(req, res) {
+			// Successful authentication, redirect home.
+
+			console.log(req.session.passport.user)
+			res.redirect('/home');
+	}
+);
 mongoose.connect(mongoDb, function (error) {
 	if(error) {
 		throw error;
@@ -61,7 +89,7 @@ var transporter = mailer.createTransport({
 const storageEngine = multer.diskStorage({
 	destination: '/public/files',
   	filename: function (req, file, callback) {
-    	callback(null, file.fieldname + '-' + Date.now());
+    	callback(null, req.session. file.fieldname + '-' + Date.now());
   }
 })
 const upload = multer({
@@ -83,7 +111,7 @@ app.get('/', function (request, response) {
 });
 
 app.post('/login', function (request, response) {
-	console.log("Req aagyi dost")
+	console.log("Login Request recieved");
 	userDetails.find({
 		email: request.body.userName,
 		password: request.body.passWord
@@ -95,6 +123,10 @@ app.post('/login', function (request, response) {
 		response.send(data);
 	});
 });
+// app.post('/loginViaGithub', function(request, response) {
+// 	console.log("Login request received via gitub");
+// 	passport.authenticate('github')
+// })
 app.get('/home', function (request, response) {
 	if(request.session.isLogin == undefined) {
 		response.redirect("/");
@@ -264,7 +296,6 @@ app.post("/getUserData", function (request, response) {
         })
     })
 })
-
 app.listen(8000);
 
 

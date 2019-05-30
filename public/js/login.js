@@ -25,24 +25,6 @@ btn.addEventListener("click", function () {
 	}
 })
 loginGithub.addEventListener("click", function () {
-	if(userName.value == "" || passWord.value == "") {
-		alert("All Fields are required");
-	} else {
-		var request = new XMLHttpRequest();
-		var data = new Object();
-		data.userName = userName.value;
-		data.passWord = passWord.value;
-		request.open('POST', '/loginViaGithub');
-		request.setRequestHeader("Content-Type", "application/json");
-		request.send(JSON.stringify(data));
-		request.onload = function () {
-			var returnedData = JSON.parse(request.responseText);
-			if(returnedData.length == 0) {
-				alert("Not a Registered user")
-			} else {
-				console.log(returnedData);
-				window.location = '/home';
-			}
-		}
-	}	
+	console.log("Hello there")
+		window.location = "/auth/github";
 })
