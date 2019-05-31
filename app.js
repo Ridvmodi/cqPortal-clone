@@ -87,16 +87,31 @@ var transporter = mailer.createTransport({
 });
 
 const storageEngine = multer.diskStorage({
-	destination: '/public/files',
+	destination: './public/files/',
   	filename: function (req, file, callback) {
-    	callback(null, req.session. file.fieldname + '-' + Date.now());
+			var filePath = req.session.data[0]._id + path.extname(file.originalname);
+			req.session.data[0].imgpath = filePath;
+			callback(null, filePath)
   }
 })
 const upload = multer({
 	storage: storageEngine,
-	limits: 20000,
-}).any();
+	limits: 1000000,
+	fileFilter: function(req, file, callback) {
+		validateFile(file, callback)
+	}
+}).single('files');
 
+function validateFile(file, callback) {
+	let extensions = ['jpg', 'png', 'gif', 'jpeg'];
+	let isAllowed = extensions.includes(file.originalname.split('.')[1].toLowerCase());
+	let isAllowedMimeType = file.mimetype.startsWith("image/")
+	if(isAllowed && isAllowedMimeType) {
+		return callback(null, true);
+	} else {
+		callback("Erorr: File Type not allowed");
+	}
+}
 
 var userDetails = mongoose.model("userdetails", userSchema);
 var tagObject = mongoose.model("tag", tagSchema);
@@ -123,10 +138,6 @@ app.post('/login', function (request, response) {
 		response.send(data);
 	});
 });
-// app.post('/loginViaGithub', function(request, response) {
-// 	console.log("Login request received via gitub");
-// 	passport.authenticate('github')
-// })
 app.get('/home', function (request, response) {
 	if(request.session.isLogin == undefined) {
 		response.redirect("/");
@@ -243,17 +254,50 @@ app.get("/profile", function(request, response) {
 })
 app.get("/editProfile", function(request, response) {
 	if(request.session.isLogin)
-		response.render("editProfile");
+		response.render("editProfile", {data: request.session.data});
 	else 
 		response.redirect("/")
 })
-app.post("/editProfile", upload, function (request, response) {
+app.post("/editProfile", function (request, response) {
 	if(request.session.isLogin) {
-		console.log(request.body)
+		request.body.imgpath = request.session.data[0].imgpath;
+		userDetails.findOneAndUpdate({_id: request.session.data[0]._id},  {
+			name: request.body.name,
+			dob : request.body.dob,
+			gender: request.body.gender,
+			phoneno: request.body.phoneno,
+			city: request.body.city,
+			email :request.body.email,
+			imgpath: request.body.imgpath
+	},
+	{
+			new: true,
+			runValidators: true
+	}).then(data => {
+		console.log(data)
+		response.send(data)
+	})
 	} else {
 		response.redirect("/");
 	}
 })
+app.post("/uploadImg", function(request, response) {
+	console.log("image req rec");
+	upload(request, response, (error) => {
+		console.log(request.file);
+		if(error) {
+			console.log("error page ");
+			response.render('editProfile', {msg: error});
+		} else if(request.file == undefined) {
+			console.log("file undefined")
+			response.render('editProfile',  {msg: "No file selected"});
+		} else {
+			console.log("new page rendered");
+			console.log(request.session.data)
+			response.render("editProfile", {data: request.session.data});
+		}
+	});
+});
 app.get("/logout", function (request, response) {
 	request.session.isLogin = 0;
 	response.redirect("/");
