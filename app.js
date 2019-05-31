@@ -327,18 +327,103 @@ app.post("/deleteTag", function (request, response) {
 		}
 	})
 })
-app.post("/getUserData", function (request, response) {
-	userDetails.countDocuments(function(error,count){
-        var start = parseInt(request.body.start);
-        var len  = parseInt(request.body.length);
-        userDetails.find({}).skip(start).limit(len)
-        .then(data => {
-            response.send({"recordsTotal" : count, "recordsFiltered" : count,data})
-        })
-        .catch(err=> {
-            response.send(err)
-        })
-    })
+app.post("/getUserData", function (req, res) {
+	console.log(req.body.role)
+	console.log(req.body.status)
+	// userDetails.countDocuments(function(error,count){
+  //       var start = parseInt(request.body.start);
+  //       var len  = parseInt(request.body.length);
+  //       userDetails.find({}).skip(start).limit(len)
+  //       .then(data => {
+  //           response.send({"recordsTotal" : count, "recordsFiltered" : count,data})
+  //       })
+  //       .catch(err=> {
+  //           response.send(err)
+  //       })
+	//   })
+	if(req.body.role === 'All' && req.body.status === 'All') {
+      userDetails.countDocuments(function(e,count){
+      var start=parseInt(req.body.start);
+      var len=parseInt(req.body.length);
+      userDetails.find({
+
+      }).skip(start).limit(len).then(data=> {
+      	if(req.body.search.value) {
+					data = data.filter((value) => {
+						return value.email.includes(req.body.search.value)
+					})
+				}
+      res.send({"recordsTotal": count, "recordsFiltered" : count, data})
+     }).catch(err => {
+      	res.send(err)
+     	})
+   });
+}
+
+else if(req.body.role === 'All' && req.body.status !== 'All')
+{
+  console.log(req.body);
+  var length;
+      userDetails.countDocuments(function(e,count){
+      var start=parseInt(req.body.start);
+      var len=parseInt(req.body.length);
+
+      userDetails.find({status: req.body.status}).then(data => length = data.length);
+
+      userDetails.find({ status: req.body.status }).skip(start).limit(len)
+	    .then(data=> {
+      if (req.body.search.value){
+				data = data.filter((value) => {
+					return value.email.includes(req.body.search.value)
+					});
+			}
+      res.send({"recordsTotal": count, "recordsFiltered" : length, data})
+     	}).catch(err => {
+      	res.send(err)
+     })
+   });  
+}
+
+else if(req.body.role !== 'All' && req.body.status === 'All')
+{
+	console.log(req.body);
+	var length;
+	userDetails.countDocuments(function(e,count){
+		var start=parseInt(req.body.start);
+		var len=parseInt(req.body.length);
+
+		userDetails.find({role: req.body.role}).then(data => length = data.length);
+	  userDetails.find({ role: req.body.role }).skip(start).limit(len).then(data=> {
+      if (req.body.search.value) {
+				data = data.filter((value) => {
+					return value.email.includes(req.body.search.value)
+				})
+			}
+      res.send({"recordsTotal": count, "recordsFiltered" : length, data})
+     }).catch(err => {
+      	res.send(err)
+     })
+   }); 
+}
+	else {
+		var length;
+		userDetails.countDocuments(function(e,count){
+			var start=parseInt(req.body.start);
+			var len=parseInt(req.body.length);
+			userDetails.find({role: req.body.role, status: req.body.status}).then(data => length = data.length);
+
+      userDetails.find({role: req.body.role, status: req.body.status}).skip(start).limit(len).then(data=> {
+			if(req.body.search.value) {
+				data = data.filter((value) => {
+					return value.email.includes(req.body.search.value)
+					})
+				}
+			res.send({"recordsTotal": count, "recordsFiltered" : length, data})
+     }).catch(err => {
+      	res.send(err)
+     })
+   }); 
+	}
 })
 app.listen(8000);
 

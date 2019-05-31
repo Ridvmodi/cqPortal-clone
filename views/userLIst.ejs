@@ -110,8 +110,8 @@
 			    		<label class="col-sm-2 col-form-label"><b>Status: </b></label>
 			    		<div class="col-sm-10">
 			    			<select class="form-control" id="editStatus">
-			    				<option>Confirmed</option>
-			    				<option>Pending</option>
+			    				<option value="confirmed">Confirmed</option>
+			    				<option value="pending">Pending</option>
 			    			</select>
 			    		</div>
 			    	</div>
@@ -119,9 +119,9 @@
 			    		<label class="col-sm-2 col-form-label"><b>Role: </b></label>
 			    		<div class="col-sm-10">
 			    			<select class="form-control" id="editRole">
-			    				<option>User</option>
-			    				<option>Community Builder</option>
-			    				<option>Admin</option>
+			    				<option value="user">User</option>
+			    				<option value="community builder">Community Builder</option>
+			    				<option value="admin">Admin</option>
 			    			</select>
 			    		</div>
 			    	</div>
@@ -239,12 +239,16 @@
 		});
 	});
 	function initTable() {
-		$('#myTable').DataTable({
+		let table = $('#myTable').DataTable({
 			"processing": true,
 			"serverSide": true,
 			"ajax": {
 				"url": "/getUserData",
-				"type": "POST", 
+				"type": "POST",
+				"data": function( d ) {
+					d.role   = $('#role').val();
+					d.status = $('#filter').val();
+				},
 			},
 			"columns": [
 				{ "data" : "name" },
@@ -256,24 +260,31 @@
 				{ "data" : null },
 			],
 			"columnDefs": [{
-                "targets": -1,
-                "render": function (data, type, row, meta) {
-                   data = '<center class="actions"></center>';
-               		return data;
-                }
-            }],
+					"targets": -1,
+					"render": function (data, type, row, meta) {
+							data = '<center class="actions"></center>';
+						return data;
+					}
+			}],
 		});
+		$('#role').on('click', function() {
+			table.ajax.reload(null, false);
+			// appendBtns();
+		})
+		$('#filter').on('click', function() {
+			table.ajax.reload(null, false);
+			// appendBtns();
+		})
+		$('#refresh').on('click', function() {
+			table.ajax.reload(null, false);
+		})
 	}
 	function appendBtns() {
 		var actionsCol = document.getElementsByClassName("actions");
 		var roleCol = document.getElementsByClassName("role");
-		var refreshBtn = document.getElementById("refresh");
 		var sendToInput = document.getElementById("sendTo");
 		var emailSubject = document.getElementById("emailSubject");
 		var emailSendBtn = document.getElementById("sendMail");
-		refreshBtn.addEventListener("click", function () {
-			window.location.reload();
-		})
 		for(var i = 1;i<roleCol.length;i++ ) {
 			state = asc[i-1].flag;
 			if(roleCol[i].innerHTML == "admin" || roleCol[i].innerHTML == "user") {
@@ -318,7 +329,8 @@
 						$('#editModal').modal("hide");
 					})
 					setInterval(function () {
-						if(($("#editModal").hasClass('show')) == false) {
+						if(($("#editModal"
+						).hasClass('show')) == false) {
 							usernameTitle.innerHTML = "Update ";
 						}	
 					}, 1000);
