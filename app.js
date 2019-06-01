@@ -477,6 +477,9 @@ else if(req.body.role !== 'All' && req.body.status === 'All')
    }); 
 	}
 })
+app.get('/404', function(request, response) {
+	response.sendFile(path.join(__dirname,'public','404.html'))
+})
 app.listen(8000);
 
 

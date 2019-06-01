@@ -229,6 +229,7 @@
 <script>
 	var asc = <%-  JSON.stringify(data) %>;
 	var state;
+	var searchInput;
 	sideBtns[3].classList.add("active");
 	$(document).ready(function() {
 		$.ajax({
@@ -242,6 +243,9 @@
 		let table = $('#myTable').DataTable({
 			"processing": true,
 			"serverSide": true,
+			"search": {
+				"caseInsensitive": false
+			},
 			"ajax": {
 				"url": "/getUserData",
 				"type": "POST",
@@ -280,6 +284,10 @@
 			table.ajax.reload(null, false);
 			appendBtns();
 		})
+		table.on('search', function(){
+			
+			
+		});
 	}
 	function appendBtns() {
 		var actionsCol = document.getElementsByClassName("actions");

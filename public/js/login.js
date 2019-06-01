@@ -18,8 +18,10 @@ btn.addEventListener("click", function () {
 			if(returnedData.length == 0) {
 				alert("Not a Registered user")
 			} else {
-				console.log(returnedData);
-				window.location = '/home';
+				if(returnedData[0].flag == "0")
+					window.location = '/404'
+				else
+					window.location = '/home';
 			}
 		}
 	}
