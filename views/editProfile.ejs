@@ -222,6 +222,9 @@
 				if(responseData == "" || responseData == null) {
 					alert("Data Not updated");
 					window.location = "/profile";
+				} else if(responseData == "img not uploaded") {
+						alert("Please upload a image");
+						window.location = "/editProfile"
 				} else {
 					alert("Data Updated successfully");
 					window.location = "/profile";

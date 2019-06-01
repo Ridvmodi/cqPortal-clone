@@ -4,18 +4,18 @@ var session = require('express-session')
 var mailer = require('nodemailer')
 var multer = require('multer')
 var passport = require('passport')
+var path = require('path')
 var passportGithub = require('passport-github')
 var mongoDb = 'mongodb://localhost/webProject'
 var GithubStrategy = passportGithub.Strategy;
 var app = express();
-var path = require('path')
 app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname,'public')));
 app.use(express.json())
 app.use(session({secret: "webProject"}))
-app.set('view engine', 'ejs')
 app.use(passport.initialize());
 app.use(passport.session());
+app.set('view engine', 'ejs')
 passport.serializeUser(function(user, done) {
 	done(null, user);
 })
@@ -43,11 +43,54 @@ var middleFunc = function (request, response, next) {
 }
 app.get('/auth/github', passport.authenticate('github'))
 app.get('/auth/github/callback',passport.authenticate('github', { failureRedirect: '/' }),
-		function(req, res) {
-			// Successful authentication, redirect home.
-
-			console.log(req.session.passport.user)
-			res.redirect('/home');
+	function(req, res) {
+		// Successful authentication, redirect home.
+		userDetails.find({
+			email: req.session.passport.user._json.email
+		}).exec(function (error, data) {
+			if(data.length != 0) {
+				req.session.isLogin = 1;
+				req.session.userName = req.body.userName;
+				req.session.password = req.body.passWord;
+				req.session.data = data;
+				req.session.data.imgpath = "avtar.png"
+				res.redirect('/home');
+			} else {
+				var data = new Object({
+					name : req.session.passport.user._json.name,
+					email : req.session.passport.user._json.email,
+					city : req.session.passport.user._json.location,
+					status : "pending",
+					dob : "31/12/1999",
+					phoneno : 1234567890,
+					gender : "male",
+					imgpath: "avtar.png",
+					role: "user",
+					flag : "1",
+					password: "qwerty123"
+				});
+				req.session.isLogin = 1;
+				req.session.data = [data];
+				let newUser = new userDetails(data);
+				newUser.save().then(data => {
+					console.log("User added");
+				})
+				var mailData = {
+					from: "ridhavrm@gmail.com",
+					to: req.session.data.email,
+					subject: "code quotient confirmation mail",
+					text: "Hello " + request.session.data.name + " this is the verification mail. Please confirm your mail id and your password is " + request.body.password,
+				}
+				transporter.sendMail(mailData, function (error, info) {
+					if(error){
+						console.log(error)
+					} else {
+						console.log("Mail Sent" + info.response);
+					}
+				})
+				res.redirect('/editProfile');
+			}
+		});
 	}
 );
 mongoose.connect(mongoDb, function (error) {
@@ -125,6 +168,7 @@ app.get('/', function (request, response) {
 		response.sendFile(path.join(__dirname,'public','index1.html'))	}
 });
 
+
 app.post('/login', function (request, response) {
 	console.log("Login Request recieved");
 	userDetails.find({
@@ -135,14 +179,16 @@ app.post('/login', function (request, response) {
 		request.session.userName = request.body.userName;
 		request.session.password = request.body.passWord;
 		request.session.data = data;
+		request.session.data.imgpath = "avtar.png"
 		response.send(data);
 	});
 });
 app.get('/home', function (request, response) {
-	if(request.session.isLogin == undefined) {
-		response.redirect("/");
-	} else
+	if(request.session.isLogin) {
 		response.render('homePage', {data: request.session.data})
+	} else {
+			response.redirect("/");
+	}
 })
 app.get("/userAdd", function (request, response) {
 	if(request.session.isLogin)
@@ -224,7 +270,7 @@ app.post("/tag", function (request, response) {
 				console.log("Tag Added");
 			});
 		}
-	})
+	});
 })
 app.get("/tag/tagslist", function(request, response) {
 	if(request.session.isLogin) {
@@ -260,26 +306,31 @@ app.get("/editProfile", function(request, response) {
 })
 app.post("/editProfile", function (request, response) {
 	if(request.session.isLogin) {
-		request.body.imgpath = request.session.data[0].imgpath;
-		userDetails.findOneAndUpdate({_id: request.session.data[0]._id},  {
-			name: request.body.name,
-			dob : request.body.dob,
-			gender: request.body.gender,
-			phoneno: request.body.phoneno,
-			city: request.body.city,
-			email :request.body.email,
-			imgpath: request.body.imgpath
-	},
-	{
-			new: true,
-			runValidators: true
-	}).then(data => {
-		console.log(data)
-		response.send(data)
-	})
+		if(request.session.data[0].imgpath == 'avtar.png') {
+			response.send("img not uploaded");
+		} else {
+				request.body.imgpath = request.session.data[0].imgpath;
+				userDetails.findOneAndUpdate({_id: request.session.data[0]._id},  {
+					name: request.body.name,
+					dob : request.body.dob,
+					gender: request.body.gender,
+					phoneno: request.body.phoneno,
+					city: request.body.city,
+					email :request.body.email,
+					imgpath: request.body.imgpath
+			},
+			{
+					new: true,
+					runValidators: true
+			}).then(data => {
+				console.log("in then")
+				console.log(data)
+				response.send(data)
+			})
+			} 
 	} else {
 		response.redirect("/");
-	}
+	} 
 })
 app.post("/uploadImg", function(request, response) {
 	console.log("image req rec");
