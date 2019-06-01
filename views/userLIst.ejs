@@ -75,7 +75,7 @@
 		}
 	</style>
 </head>
-<body >
+<body>
 	<% include partials/menu.html %>
 	<div class="modal fade" tabindex="-1" role="dialog" id="editModal">
 		<div class="modal-dialog" role="document">
@@ -289,7 +289,7 @@
 		var emailSendBtn = document.getElementById("sendMail");
 		for(var i = 1;i<roleCol.length;i++ ) {
 			state = asc[i-1].flag;
-			if(roleCol[i].innerHTML == "admin" || roleCol[i].innerHTML == "user") {
+			if(roleCol[i].innerHTML == "admin" || roleCol[i].innerHTML == "user" || roleCol[i].innerHTML=='community builder') {
 				let emailBtn = document.createElement("button");
 				let editBtn = document.createElement("button");
 				let stateBtn = document.createElement("button");
@@ -358,7 +358,7 @@
 							to: sendTo.value,
 							from: "ridhavrm@gmail.com",
 							subject: emailSubject.value,
-							text: $('#textarea').val(),
+							html: $('#textarea').val(),
 						});
 						var req = new XMLHttpRequest();
 						req.open("POST", "/sendMail");

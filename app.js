@@ -141,8 +141,8 @@ app.get('/auth/github/callback',passport.authenticate('github', { failureRedirec
 		}).exec(function (error, data) {
 			if(data.length != 0) {
 				req.session.isLogin = 1;
-				req.session.userName = req.body.userName;
-				req.session.password = req.body.passWord;
+				req.session.userName = data.username;
+				req.session.password = data.password;
 				req.session.data = data;
 				req.session.data.imgpath = "avtar.png"
 				res.redirect('/home');
@@ -153,7 +153,7 @@ app.get('/auth/github/callback',passport.authenticate('github', { failureRedirec
 					city : req.session.passport.user._json.location,
 					status : "pending",
 					dob : "31/12/1999",
-					phoneno : 1234567890,
+					phoneno : "1234567890",
 					gender : "male",
 					imgpath: "avtar.png",
 					role: "user",
@@ -381,17 +381,7 @@ app.post("/deleteTag", function (request, response) {
 	})
 })
 app.post("/getUserData", function (req, res) {
-	// userDetails.countDocuments(function(error,count){
-  //       var start = parseInt(request.body.start);
-  //       var len  = parseInt(request.body.length);
-  //       userDetails.find({}).skip(start).limit(len)
-  //       .then(data => {
-  //           response.send({"recordsTotal" : count, "recordsFiltered" : count,data})
-  //       })
-  //       .catch(err=> {
-  //           response.send(err)
-  //       })
-	//   })
+	var flag;
 	if(req.body.role === 'All' && req.body.status === 'All') {
       userDetails.countDocuments(function(e,count){
       var start = parseInt(req.body.start);
@@ -400,7 +390,10 @@ app.post("/getUserData", function (req, res) {
       }).skip(start).limit(len).then(data=> {
       	if(req.body.search.value) {
 					data = data.filter((value) => {
-						return value.email.includes(req.body.search.value)
+						flag = value.email.includes(req.body.search.value) || value.phoneno.includes(req.body.search.value)
+						 || value.city.includes(req.body.search.value) || value.status.includes(req.body.search.value) 
+						 || value.role.includes(req.body.search.value);
+						return flag;
 					})
 				}
       res.send({"recordsTotal": count, "recordsFiltered" : count, data})
@@ -424,7 +417,10 @@ else if(req.body.role === 'All' && req.body.status !== 'All')
 	    .then(data=> {
       if (req.body.search.value){
 				data = data.filter((value) => {
-					return value.email.includes(req.body.search.value)
+					flag = value.email.includes(req.body.search.value) || value.phoneno.includes(req.body.search.value)
+						 || value.city.includes(req.body.search.value) || value.status.includes(req.body.search.value) 
+						 || value.role.includes(req.body.search.value);
+						return flag;
 					});
 			}
       res.send({"recordsTotal": count, "recordsFiltered" : length, data})
@@ -446,7 +442,10 @@ else if(req.body.role !== 'All' && req.body.status === 'All')
 	  userDetails.find({ role: req.body.role }).skip(start).limit(len).then(data=> {
       if (req.body.search.value) {
 				data = data.filter((value) => {
-					return value.email.includes(req.body.search.value)
+					flag = value.email.includes(req.body.search.value) || value.phoneno.includes(req.body.search.value)
+						 || value.city.includes(req.body.search.value) || value.status.includes(req.body.search.value) 
+						 || value.role.includes(req.body.search.value);
+						return flag;
 				})
 			}
       res.send({"recordsTotal": count, "recordsFiltered" : length, data})
@@ -465,7 +464,10 @@ else if(req.body.role !== 'All' && req.body.status === 'All')
       userDetails.find({role: req.body.role, status: req.body.status}).skip(start).limit(len).then(data=> {
 			if(req.body.search.value) {
 				data = data.filter((value) => {
-					return value.email.includes(req.body.search.value)
+					flag = value.email.includes(req.body.search.value) || value.phoneno.includes(req.body.search.value)
+						 || value.city.includes(req.body.search.value) || value.status.includes(req.body.search.value) 
+						 || value.role.includes(req.body.search.value);
+						return flag;
 					})
 				}
 			res.send({"recordsTotal": count, "recordsFiltered" : length, data})

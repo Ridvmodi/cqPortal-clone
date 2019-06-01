@@ -128,7 +128,10 @@
 		    			req.send(JSON.stringify({id: id}));
 		    			req.onload = function () {
 		    				if(req.responseText == "deleted") {
-			    				tbody.removeChild(event.target.parentNode.parentNode.parentNode);
+								if(event.target.tagName == "SPAN")
+									tbody.removeChild(event.target.parentNode.parentNode.parentNode.parentNode);
+								else
+									tbody.removeChild(event.target.parentNode.parentNode.parentNode);
 		    				}	
 		    			}
 		    		}
