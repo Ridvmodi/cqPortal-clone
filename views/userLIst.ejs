@@ -179,9 +179,9 @@
 			<span id="tag">User List</span>
 			<select id="role">
 				<option value="All">All</option>
-				<option value="Admins">Admins</option>
-				<option value="Users">Users</option>
-				<option value="Community Builder">Community Builder</option>
+				<option value="admin">Admins</option>
+				<option value="user">Users</option>
+				<option value="community builder">Community Builder</option>
 			</select>
 			<select id="filter">
 				<option value="All">All</option>
@@ -245,14 +245,15 @@
 			"ajax": {
 				"url": "/getUserData",
 				"type": "POST",
+				"async": false,
 				"data": function( d ) {
 					d.role   = $('#role').val();
 					d.status = $('#filter').val();
 				},
 			},
 			"columns": [
-				{ "data" : "name" },
 				{ "data" : "email" },
+				{ "data" : "phoneno" },
 				{ "data" : "city" },
 				{ "data" : "status" },
 				{ "data" : "role",
@@ -269,14 +270,15 @@
 		});
 		$('#role').on('click', function() {
 			table.ajax.reload(null, false);
-			// appendBtns();
+			appendBtns();
 		})
 		$('#filter').on('click', function() {
-			table.ajax.reload(null, false);
-			// appendBtns();
+				table.ajax.reload(null, false);
+				appendBtns();
 		})
 		$('#refresh').on('click', function() {
 			table.ajax.reload(null, false);
+			appendBtns();
 		})
 	}
 	function appendBtns() {
@@ -367,6 +369,16 @@
 				
 				stateBtn.setAttribute("id", asc[i - 1]._id);
 				stateBtn.addEventListener("click", function (event) {
+					var id;
+					if(event.target.tagName == "SPAN")
+						id = event.target.parentNode.getAttribute("id");
+					else
+						id = event.target.getAttribute("id");
+						for(var j = 0;j<asc.length;j++) {
+							if((asc[j]._id) == id) {
+								state = asc[j].flag;		
+							}
+						}
 					if(state == "0") {
 						stateBtn.classList.remove("btn-warning");
 						stateBtn.classList.add("actions-btn", "btn", "btn-success");
@@ -380,11 +392,6 @@
 						stateBtn.childNodes[0].setAttribute("class", "fa fa-times-circle");
 						state = "0";
 					}	
-					var id;
-					if(event.target.tagName == "SPAN")
-						id = event.target.parentNode.getAttribute("id");
-					else
-						id = event.target.getAttribute("id");
 					var req = new XMLHttpRequest();
 					req.open("POST", "/updateState");
 					req.setRequestHeader("Content-Type", "application/json");

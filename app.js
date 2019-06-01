@@ -41,58 +41,7 @@ var middleFunc = function (request, response, next) {
 		response.send();
 	}
 }
-app.get('/auth/github', passport.authenticate('github'))
-app.get('/auth/github/callback',passport.authenticate('github', { failureRedirect: '/' }),
-	function(req, res) {
-		// Successful authentication, redirect home.
-		userDetails.find({
-			email: req.session.passport.user._json.email
-		}).exec(function (error, data) {
-			if(data.length != 0) {
-				req.session.isLogin = 1;
-				req.session.userName = req.body.userName;
-				req.session.password = req.body.passWord;
-				req.session.data = data;
-				req.session.data.imgpath = "avtar.png"
-				res.redirect('/home');
-			} else {
-				var data = new Object({
-					name : req.session.passport.user._json.name,
-					email : req.session.passport.user._json.email,
-					city : req.session.passport.user._json.location,
-					status : "pending",
-					dob : "31/12/1999",
-					phoneno : 1234567890,
-					gender : "male",
-					imgpath: "avtar.png",
-					role: "user",
-					flag : "1",
-					password: "qwerty123"
-				});
-				req.session.isLogin = 1;
-				req.session.data = [data];
-				let newUser = new userDetails(data);
-				newUser.save().then(data => {
-					console.log("User added");
-				})
-				var mailData = {
-					from: "ridhavrm@gmail.com",
-					to: req.session.data.email,
-					subject: "code quotient confirmation mail",
-					text: "Hello " + request.session.data.name + " this is the verification mail. Please confirm your mail id and your password is " + request.body.password,
-				}
-				transporter.sendMail(mailData, function (error, info) {
-					if(error){
-						console.log(error)
-					} else {
-						console.log("Mail Sent" + info.response);
-					}
-				})
-				res.redirect('/editProfile');
-			}
-		});
-	}
-);
+
 mongoose.connect(mongoDb, function (error) {
 	if(error) {
 		throw error;
@@ -125,7 +74,7 @@ var transporter = mailer.createTransport({
   service: 'gmail',
   auth: {
     user: 'ridhavrm@gmail.com',
-    pass: 'modi0786'
+    pass: 'ridvmodi'
   }
 });
 
@@ -183,6 +132,59 @@ app.post('/login', function (request, response) {
 		response.send(data);
 	});
 });
+app.get('/auth/github', passport.authenticate('github'))
+app.get('/auth/github/callback',passport.authenticate('github', { failureRedirect: '/' }),
+	function(req, res) {
+		// Successful authentication, redirect home.
+		userDetails.find({
+			email: req.session.passport.user._json.email
+		}).exec(function (error, data) {
+			if(data.length != 0) {
+				req.session.isLogin = 1;
+				req.session.userName = req.body.userName;
+				req.session.password = req.body.passWord;
+				req.session.data = data;
+				req.session.data.imgpath = "avtar.png"
+				res.redirect('/home');
+			} else {
+				var data = new Object({
+					name : req.session.passport.user._json.name,
+					email : req.session.passport.user._json.email,
+					city : req.session.passport.user._json.location,
+					status : "pending",
+					dob : "31/12/1999",
+					phoneno : 1234567890,
+					gender : "male",
+					imgpath: "avtar.png",
+					role: "user",
+					flag : "1",
+					password: "qwerty123"
+				});
+				req.session.isLogin = 1;
+				let newUser = new userDetails(data);
+				newUser.save().then(result => {
+				req.session.data = [result];
+				console.log("User added");
+				var mailData = {
+					from: "ridhavrm@gmail.com",
+					to: req.session.data[0].email,
+					subject: "code quotient confirmation mail",
+					text: "Hello " + req.session.data[0].name + " this is the verification mail. Please confirm your mail id and your password is " + req.session.data[0].password,
+				}
+				transporter.sendMail(mailData, function (error, info) {
+					if(error){
+						console.log(mailData.to)
+						console.log(error)
+					} else {
+						console.log("Mail Sent" + info.response);
+					}
+				})
+					res.redirect('/editProfile');
+				});			
+			}
+		});
+	}
+);
 app.get('/home', function (request, response) {
 	if(request.session.isLogin) {
 		response.render('homePage', {data: request.session.data})
@@ -379,8 +381,6 @@ app.post("/deleteTag", function (request, response) {
 	})
 })
 app.post("/getUserData", function (req, res) {
-	console.log(req.body.role)
-	console.log(req.body.status)
 	// userDetails.countDocuments(function(error,count){
   //       var start = parseInt(request.body.start);
   //       var len  = parseInt(request.body.length);
@@ -394,10 +394,9 @@ app.post("/getUserData", function (req, res) {
 	//   })
 	if(req.body.role === 'All' && req.body.status === 'All') {
       userDetails.countDocuments(function(e,count){
-      var start=parseInt(req.body.start);
-      var len=parseInt(req.body.length);
+      var start = parseInt(req.body.start);
+      var len = parseInt(req.body.length);
       userDetails.find({
-
       }).skip(start).limit(len).then(data=> {
       	if(req.body.search.value) {
 					data = data.filter((value) => {
