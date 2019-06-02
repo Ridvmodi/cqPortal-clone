@@ -14,3 +14,25 @@
 	<div class="menu-item"><i class="fa fa-lock"></i><span>Change Password</span></div>
 	<div class="menu-item"><i class="fa fa-sign-out"></i><span>Logout</span></div>
 </div>
+<script>
+	var dbData;
+	var menu = document.getElementById("menu");
+	var sideBtns = menu.getElementsByClassName("menu-item")
+	dbData = <%- JSON.stringify(data[0]) %>;
+	if("<%=data[0].role%>" == 'user') {	
+		sideBtns[4].addEventListener("click", function(){
+			alert("Hello world")
+		});
+	} else {	
+		sideBtns[4].addEventListener("click", function(){	
+			window.location = "/communityList";
+		});
+	}
+	if(dbData.role == "user") {
+		sideBtns[2].style.display = "none";
+		sideBtns[3].style.display = "none";
+		sideBtns[5].style.display = "none";
+		sideBtns[6].style.display = "none";
+	}
+	
+</script>

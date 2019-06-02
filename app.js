@@ -100,7 +100,7 @@ function validateFile(file, callback) {
 	let isAllowedMimeType = file.mimetype.startsWith("image/")
 	if(isAllowed && isAllowedMimeType) {
 		return callback(null, true);
-	} else {
+	} else { 
 		callback("Erorr: File Type not allowed");
 	}
 }
@@ -247,7 +247,7 @@ app.post("/updateUser", function (request, response) {
 });
 app.get("/communityList", function (request, response) {
 	if(request.session.isLogin)
-		response.render('communityList');
+		response.render('communityList', {data: request.session.data});
 	else 
 		response.redirect("/");
 })
@@ -285,7 +285,7 @@ app.get("/tag/tagslist", function(request, response) {
 })
 app.get("/changePassword", function (request, response) {
 	if(request.session.isLogin)
-		response.render('changePassword');
+		response.render('changePassword', {data: request.session.data});
 	else 
 		response.redirect("/");
 })
@@ -478,7 +478,12 @@ else if(req.body.role !== 'All' && req.body.status === 'All')
 	}
 })
 app.get('/404', function(request, response) {
-	response.sendFile(path.join(__dirname,'public','404.html'))
+	if(request.session.isLogin) {
+		request.session.isLogin = 0;
+		response.sendFile(path.join(__dirname,'public','404.html'))
+	} else {
+		response.redirect('/');
+	}
 })
 app.listen(8000);
 

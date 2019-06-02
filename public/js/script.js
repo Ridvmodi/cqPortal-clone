@@ -36,9 +36,7 @@ sideBtns[2].addEventListener("click", function(){
 sideBtns[3].addEventListener("click", function(){
 	window.location = "/userList";
 });
-sideBtns[4].addEventListener("click", function(){
-	window.location = "/communityList";
-});
+
 sideBtns[5].addEventListener("click", function(){
 	console.log("switch userAdd");
 	$.confirm({
@@ -62,6 +60,7 @@ sideBtns[6].addEventListener("click", function(){
 });
 sideBtns[7].addEventListener("click", function(){
 	window.location = "/changePassword";
+	// alert("chnage password")
 });
 navImg.addEventListener("click", function() {
 	window.location = "/profile";
