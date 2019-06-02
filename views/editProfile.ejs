@@ -181,15 +181,6 @@
     var nameInput = document.getElementById("name");
     var city = document.getElementById("city");
 		var fileInput = document.getElementById("file-input");
-		// document.getElementById("file-input").addEventListener("change", function () {
-		// 		console.log(document.getElementById("file-input").value)
-		// 		var fileName = document.getElementById("file-input").value;
-		// 		var req = new XMLHttpRequest();
-		// 		req.open("POST", "/uploadImg");
-		// 		req.setRequestHeader("Content-Type", "application/json");
-		// 		req.setRequestHeader("Authorization", 'multipart/form-data');
-		// 		req.send(JSON.stringify({imgpath: fileName}));
-		// })
 	
     $(document).ready(function(){
       var date_input=$('input[name="date"]'); //our date input has the name "date"
@@ -209,31 +200,38 @@
     	window.location = "/profile";
     })
     updateBtn.addEventListener("click",function () {
-    	var req = new XMLHttpRequest();
-    	req.open("POST", "/editProfile")
-    	req.setRequestHeader("Content-Type", "application/json");
-			req.setRequestHeader("Authorization", 'multipart/form-data');
-    	var data = new Object({
-    		email: email.value,
-    		phoneno: phone.value,
-    		dob: dateInput.value,
-    		gender: gender.value,
-    		name: nameInput.value,
-    		city: city.value,
-    		imgpath: fileInput.value,
-    	});
-			req.send(JSON.stringify(data));
-			req.onload = function() {
-				var responseData = req.responseText;
-				if(responseData == "" || responseData == null) {
-					alert("Data Not updated");
-					window.location = "/profile";
-				} else if(responseData == "img not uploaded") {
-						alert("Please upload a image");
-						window.location = "/editProfile"
-				} else {
-					alert("Data Updated successfully");
-					window.location = "/profile";
+			if(dateInput.value == "") {
+				alert("Please fill your Dob");
+				window.location = "/editProfile";
+			}
+			else {
+				var req = new XMLHttpRequest();
+				req.open("POST", "/editProfile")
+				req.setRequestHeader("Content-Type", "application/json");
+				req.setRequestHeader("Authorization", 'multipart/form-data');
+				var data = new Object({
+					email: email.value,
+					phoneno: phone.value,
+					dob: dateInput.value,
+					gender: gender.value,
+					name: nameInput.value,
+					city: city.value,
+					imgpath: fileInput.value,
+					status: "Confirmed"
+				});
+				req.send(JSON.stringify(data));
+				req.onload = function() {
+					var responseData = req.responseText;
+					if(responseData == "" || responseData == null) {
+						alert("Data Not updated");
+						window.location = "/editProfile";
+					} else if(responseData == "img not uploaded") {
+							alert("Please upload a image");
+							window.location = "/editProfile"
+					} else {
+						alert("Data Updated successfully");
+						window.location = "/profile";
+					}
 				}
 			}
     })

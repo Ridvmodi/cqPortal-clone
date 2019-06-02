@@ -192,9 +192,10 @@ app.get('/home', function (request, response) {
 			response.redirect("/");
 	}
 })
+app.get('/')
 app.get("/userAdd", function (request, response) {
 	if(request.session.isLogin)
-		response.render('userAdd');
+		response.render('userAdd', {data: request.session.data});
 	else
 		response.redirect("/");
 })
@@ -253,7 +254,7 @@ app.get("/communityList", function (request, response) {
 })
 app.get("/tag", function (request, response) {
 	if(request.session.isLogin)
-		response.render('tag');
+		response.render('tag', {data: request.session.data});
 	else 
 		response.redirect("/");
 });
@@ -270,6 +271,7 @@ app.post("/tag", function (request, response) {
 			});
 			newTag.save().then( data => {
 				console.log("Tag Added");
+				response.send("1");
 			});
 		}
 	});
@@ -277,7 +279,7 @@ app.post("/tag", function (request, response) {
 app.get("/tag/tagslist", function(request, response) {
 	if(request.session.isLogin) {
 		tagObject.find({}).exec(function(error, data) {
-			response.render('tagslist', {data: data});
+			response.render('tagslist', {tagdata: data, data: request.session.data});
 		});
 	} 
 	else 
@@ -301,8 +303,10 @@ app.get("/profile", function(request, response) {
 		response.redirect("/")
 })
 app.get("/editProfile", function(request, response) {
-	if(request.session.isLogin)
+	if(request.session.isLogin) {
+		console.log(request.url)
 		response.render("editProfile", {data: request.session.data});
+	}
 	else 
 		response.redirect("/")
 })
@@ -319,14 +323,14 @@ app.post("/editProfile", function (request, response) {
 					phoneno: request.body.phoneno,
 					city: request.body.city,
 					email :request.body.email,
-					imgpath: request.body.imgpath
+					imgpath: request.body.imgpath,
+					status: request.body.status,
 			},
 			{
 					new: true,
 					runValidators: true
 			}).then(data => {
-				console.log("in then")
-				console.log(data)
+				request.session.data = [data];
 				response.send(data)
 			})
 			} 

@@ -17,6 +17,8 @@ btn.addEventListener("click", function () {
 			var returnedData = JSON.parse(request.responseText);
 			if(returnedData.length == 0) {
 				alert("Not a Registered user")
+			} else if (returnedData[0].status == 'Pending'){
+				window.location = '/editProfile';
 			} else {
 				if(returnedData[0].flag == "0")
 					window.location = '/404'

@@ -91,6 +91,13 @@
 			flag: "1",
 		});
 		request.send(JSON.stringify(data));
+		request.onload = function() {
+			if(request.responseText == '1') {
+				alert("Tag Added");
+			} else {
+				alert("Tag not added");
+			}
+		}
 	})
 </script>
 </html>

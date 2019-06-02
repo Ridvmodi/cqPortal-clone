@@ -70,7 +70,7 @@
 	        </tr>
 	    </thead>
 	    <tbody id="tbody">
-	    	<% data.forEach(function(tag) { %>
+	    	<% tagdata.forEach(function(tag) { %>
         	<tr>
 	            <td><%=tag.name%></td>
 	            <td><%=tag.creator%></td>
@@ -96,7 +96,7 @@
 		window.location.reload();
 	})
 	var tbody = document.getElementById("tbody");
-	var dbData = <%- JSON.stringify(data) %>
+	var dbData = <%- JSON.stringify(tagdata) %>
 	sideBtns[6].classList.add("active");
 	$(document).ready( function () {
     	$('#myTable').DataTable();

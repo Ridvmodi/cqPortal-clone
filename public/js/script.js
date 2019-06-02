@@ -46,7 +46,7 @@ sideBtns[5].addEventListener("click", function(){
 	    	'YES': {
 	    		btnClass: "btn btn-success",
 	    		action: function () {
-	    			
+	    			window.location = "/user/home";
 	    		}
 	    	}, 
 	    	'NO' : {

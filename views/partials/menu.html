@@ -33,6 +33,12 @@
 		sideBtns[3].style.display = "none";
 		sideBtns[5].style.display = "none";
 		sideBtns[6].style.display = "none";
+		if(dbData.status == "Pending") {
+			menu.style.display = "none";
+		} else {
+			console.log("hey")
+			menu.style.display = "block";
+		}
 	}
 	
 </script>
