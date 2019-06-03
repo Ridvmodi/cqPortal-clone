@@ -236,8 +236,9 @@ app.get("/userList", function (request, response) {
 	}
 });
 app.post("/updateUser", function (request, response) {
+	console.log(request.body)
 	userDetails.updateOne(
-		{"email": request.session.userName}, 
+		{"email": request.body.email}, 
 		{$set: request.body},function (error, data) {
 			if(error) 
 				throw error
@@ -249,6 +250,18 @@ app.post("/updateUser", function (request, response) {
 app.get("/communityList", function (request, response) {
 	if(request.session.isLogin)
 		response.render('communityList', {data: request.session.data});
+	else 
+		response.redirect("/");
+})
+app.get('/communityPannel', function(request, response) {
+	if(request.session.isLogin)
+		response.render('communityPannel', {data: request.session.data});
+	else 
+		response.redirect("/");
+})
+app.get("/community/addCommunity", function(request, response) {
+	if(request.session.isLogin)
+		response.render('addCommunity', {data: request.session.data});
 	else 
 		response.redirect("/");
 })

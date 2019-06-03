@@ -16,9 +16,11 @@
 			margin-left: -52px;
 		}
 		#table {
-			width: 95%;
-			float: left;
+			position: absolute;
+			left: 50px;
+			right: 0;
 			margin: 10px;
+			overflow: auto;
 		}
 		#tag {
 			width: 100px;
@@ -299,6 +301,7 @@
 				let stateBtn = document.createElement("button");
 				let usernameTitle = document.getElementById("usernameTitle");
 				let span = document.createElement("span");
+				let email;
 				emailBtn.classList.add("actions-btn", "btn", "btn-dark");
 				editBtn.classList.add("actions-btn", "btn", "btn-primary");
 				editBtn.setAttribute("id", "edit" + asc[i - 1]._id);
@@ -312,6 +315,7 @@
 					for(var j = 0;j<asc.length;j++) {
 						if(("edit" + asc[j]._id) == id) {
 							usernameTitle.innerHTML += asc[j].email;		
+							email = asc[j].email;
 						}
 					}
 					var editUserName = document.getElementById("editUserName");
@@ -327,6 +331,7 @@
 							phoneno: editPhoneNo.value,
 							role: editRole.value,
 							status: editStatus.value,
+							email: email,
 						});
 						var request = new XMLHttpRequest();
 						request.open("POST", "/updateUser");

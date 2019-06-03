@@ -1,4 +1,5 @@
-var dbData;
+var dbData, flag = 1;
+var str = "Switch As User";
 var menu = document.getElementById("menu");
 var sideBtns = menu.getElementsByClassName("menu-item")
 var sideBtn = document.getElementById("sideBtn");
@@ -17,6 +18,7 @@ sideBtn.addEventListener("click", function () {
 		for(var i = 0;i<span.length;i++) {
 			span[i].style.display = 'none';
 		}
+		$("#table").animate({left: '50px'}, 480);
 	} else {
 		menu.style.width = '300px';
 		setTimeout(function () {
@@ -24,6 +26,7 @@ sideBtn.addEventListener("click", function () {
 				span[i].style.display = 'inline';
 			}
 		}, 210);
+		$("#table").animate({left: '300px'}, 300);
 	}
 });
 
@@ -40,13 +43,26 @@ sideBtns[3].addEventListener("click", function(){
 sideBtns[5].addEventListener("click", function(){
 	console.log("switch userAdd");
 	$.confirm({
-	    title: 'Switch As User',
+	    title: str,
 	    content: 'Do you really want switch state..',
 	    buttons: {
 	    	'YES': {
 	    		btnClass: "btn btn-success",
 	    		action: function () {
-	    			window.location = "/user/home";
+					if(flag) {
+						sideBtns[2].style.display = "none";
+						sideBtns[3].style.display = "none";
+						sideBtns[6].style.display = "none";
+						flag = 0;
+						str = "Switch As Admin"
+						window.location = '/communityPannel'
+					} else {
+						sideBtns[2].style.display = "block";
+						sideBtns[3].style.display = "block";
+						sideBtns[6].style.display = "block";
+						flag = 1;
+						str = 'Switch As User'
+					}
 	    		}
 	    	}, 
 	    	'NO' : {

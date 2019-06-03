@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/trumbowyg.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+    <title>CQ</title>
+    <style>
+         * {
+            box-sizing: border-box;
+         }
+        body {
+            background-color: #F3F4F4;
+            color: gray;
+        }
+        #menu {
+			margin-left: 0;
+		}
+        #menu i {
+            font-size: 24px;
+        }
+        .header {
+            background-color: #3ea7c1;
+            line-height: 50px;
+            padding-left: 10%;
+        }
+        .innerDiv .header button {
+            background: transparent;
+            border: 1px solid #fff;
+            width: 50px;
+            color: #fff;
+            cursor: pointer;
+        }
+        .innerDiv .header button i {
+            padding: 0;
+            margin: 5px;
+            display: block;
+        }
+        .content {
+            width: 40%;
+            margin: 0 auto;
+            margin-top: 1%;
+            margin-bottom: 2%;
+        }
+        h2 {
+            margin: 0;
+        }
+        #textInput {
+            width: 100%;
+            border-radius: 3px;
+            padding: 8px; 
+            margin-bottom: 2%;
+        }
+        textarea {
+            margin-top: 2%;
+            width: 100%;
+            border-radius: 2px;
+            resize: none;
+        }
+        .radio {
+            display: inline;
+        }
+        #upload {
+            margin-top: 2%;
+            margin-left: 2%;
+            background-color: #fab448;
+            height: 30px;
+            border: none;
+            color: #fff;
+        }
+        #create {
+            margin-top: 4%;
+            background-color: #3598d9;
+            height: 30px;
+            width: 100%;
+            text-align: center;
+            color: #fff;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <% include partials/menu.html %>
+    <div class="innerDiv">
+        <div class="header">
+            <button><i class="fa fa-users"></i></button>
+            <button><i class="fa fa-search"></i></button>
+        </div>
+        <div class="content">
+            <h2>Create Community</h2>
+            <br>
+            <input type="text" id="textInput" placeholder="Name">
+            <br>
+            <label>Description</label>
+            <br>
+            <textarea id="textArea"></textarea>
+            <br>
+            <lebel class="radio">Rule: </lebel>
+            <input type="radio" class="radio" name="role">
+            <label class="radio">Direct: </label>
+            <input type="radio" class="radio" name="role">
+            <label class="radio">Permisson</label>
+            <br>
+            <button id="upload">Upload Image</button>
+            <br>
+            <button id="create">Create Community</button>
+        </div>
+    </div>
+    <% include partials/modal.html %>
+</body>
+<script src="/js/script.js"></script>
+<script
+src="https://code.jquery.com/jquery-3.4.1.min.js"
+integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+crossorigin="anonymous"></script>
+<script src="/js/trumbowyg.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $.trumbowyg.svgPath = "/css/trumbowyg.svg"
+        $("#textArea").trumbowyg();
+    });
+</script>
+</html>
