@@ -64,19 +64,78 @@
             color: #fff;
             cursor: pointer;
         }
+        .listPannel {
+            box-sizing: border-box; 
+            width: 70%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+        }
+        .listItem {
+            border-top: 1px solid #cccccc;
+            border-bottom: 1px solid #cccccc;
+            margin-bottom: 10px;
+            padding: 1%;
+            position: relative;
+        }
+        .listItem > * {
+            display: inline;
+        }
+        #name {
+            color: #3ea7c1;
+            text-decoration: none;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-left: 4%;
+        }
+        #member {
+            text-decoration: none;
+            color: #3ea7c1;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 18%;
+        }
+        .img {
+            width: 45px;
+            height: 45px;
+            box-shadow: 2px 2px 6px #cccccc, -2px -2px 6px #cccccc;
+        }
+        .settingIcon {
+            background-color: #50d136;
+            border-radius: 5px;
+            padding: 2px;
+            text-align: center;
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 0;
+        }
     </style>
 </head>
 <body>
     <% include partials/menu.html %>
     <div class="innerDiv">
         <div class="header">
-            <button><i class="fa fa-users"></i></button>
-            <button><i class="fa fa-search"></i></button>
+            <button id="listBtn"><i class="fa fa-users"></i></button>
+            <button id="search"><i class="fa fa-search"></i></button>
         </div>
         <div class="content">
             <div class="createHeader">
                 <h3>My Communities</h3>
                 <button id="create">Create</button>
+            </div>
+            <div class="listPannel">
+                <% communityData.forEach(d => {%>
+                    <div class="listItem" id="<%= d._id%>">
+                        <img src="/files/avtar.png%>" alt="" class="img">
+                        <a href="#" id="name"><%=d.name%></a>
+                        <a href="#" id="member">Members(<%=d.members%>)</a>
+                        <!-- <i class="fa fa-cogs settingIcon" id="<%=d._id%>"></i> -->
+                    </div>
+                <%})%>
             </div>
         </div>
     </div>
@@ -92,6 +151,14 @@ crossorigin="anonymous"></script>
     var createBtn = document.getElementById("create");
     createBtn.addEventListener("click", function() {
         window.location = "/community/addCommunity"
+    })
+    var searchBtn = document.getElementById("search");
+    searchBtn.addEventListener("click", function(){
+        window.location = "/community/list"
+    })
+    var listBtn = document.getElementById("listBtn");
+    listBtn.addEventListener("click", function() {
+        window.location.reload();
     })
 </script>
 </html>

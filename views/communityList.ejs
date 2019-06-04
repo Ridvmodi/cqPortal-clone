@@ -14,8 +14,9 @@
 			margin-left: -52px;
 		}
 		#table {
-			width: 95%;
-			float: left;
+			position: absolute;
+			left: 50px;
+			right: 0;
 			margin: 10px;
 		}
 		#tag {
@@ -49,6 +50,13 @@
 			margin-right: 10px;
 			float: right;
 		}
+		.actions i {
+			background-color: #000;
+			font-size: 16px;
+			text-align: center;
+			padding: 5px;
+			cursor: pointer;
+		}
 	</style>
 </head>
 <body>
@@ -58,8 +66,8 @@
 			<span id="tag">Community List</span>
 			<select id="filter">
 				<option value="All">All</option>
-				<option value="Pending">Direct</option>
-				<option value="Confirmed">Permission</option>
+				<option value="direct">Direct</option>
+				<option value="permission">Permission</option>
 			</select>
 			<span id="refresh" class="fa fa-refresh">Refresh</span>
 		</div>
@@ -76,24 +84,17 @@
 	        </tr>
 	    </thead>
 	    <tbody>
+			<%communityData.forEach(d => {%>
 	        <tr>
-	            <td>Row 1 Data 1</td>
-	            <td>Row 1 Data 2</td>
-	            <td>Row 1 Data 1</td>
-	            <td>Row 1 Data 2</td>
-	            <td>Row 1 Data 1</td>
-	            <td>Row 1 Data 2</td>
-	            <td>Row 1 Data 1</td>
-	        </tr>
-	        <tr>
-	            <td>Row 2 Data 1</td>
-	            <td>Row 2 Data 2</td>
-	            <td>Row 2 Data 1</td>
-	            <td>Row 2 Data 2</td>
-	            <td>Row 2 Data 1</td>
-	            <td>Row 2 Data 2</td>
-	            <td>Row 2 Data 1</td>
-	        </tr>
+	            <td><%=d.name%></td>
+	            <td><%=d.rule%></td>
+	            <td><%=d.location%></td>
+	            <td><%=d.owner%></td>
+	            <td><%=d.creationdate%></td>
+	            <td class="actions"></td>
+	            <td>hello</td>
+			</tr>
+			<%})%>
 	    </tbody>
 		</table>
 	</div>
@@ -111,5 +112,14 @@
 	$(document).ready( function () {
     	$('#myTable').DataTable();
 	});
+	var actionBtns = document.getElementsByClassName("actions");
+	for(var i = 0;i<actionBtns.length;i++) {
+		var editBtn = document.createElement("i");
+		editBtn.classList.add("fa", "fa-edit");
+		actionBtns[i].appendChild(editBtn);
+		var infoBtn = document.createElement("i");
+		infoBtn.classList.add("fa", "fa-info");
+		actionBtns[i].appendChild(infoBtn);
+	}
 </script>
 </html>

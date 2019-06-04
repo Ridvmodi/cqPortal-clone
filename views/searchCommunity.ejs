@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+    <title>CQ</title>
+    <style>
+        #menu {
+			margin-left: 0;
+		}
+        #menu i {
+            font-size: 24px;
+        }
+        #nav-avtar {
+            width: 40px;
+            height: 40px;
+        }
+        .header {
+            background-color: #3ea7c1;
+            line-height: 50px;
+            padding-left: 10%;
+        }
+        .innerDiv .header button {
+            background: transparent;
+            border: 1px solid #fff;
+            width: 50px;
+            color: #fff;
+            cursor: pointer;
+        }
+        .innerDiv .header button i {
+            padding: 0;
+            margin: 5px;
+            display: block;
+        }
+        #searchInput {
+            border-radius: 5px;
+            padding: 6px;
+            width: 350px;
+            border: none;
+            float: right;
+            margin-top: 1%;
+        }
+        .content {
+            margin-top: 5%;
+        }
+        .listItem {
+            box-sizing: border-box;
+            background-color: #fff;
+            box-shadow: 5px 5px 10px #e8eaea, -5px -5px 10px #e8eaea;
+            width: 80%;
+            height: 120px;
+            padding: 1%;
+            margin: 0 auto;
+            margin-bottom: 2%;
+            position: relative;
+        }
+        .listItem button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 2%;
+        }
+        .listItem p {
+            margin: 0;
+        }
+        #name a{
+            color: #227daa;
+            text-decoration: none;
+        }
+        #img {
+            box-shadow: 2px 2px 6px #cccccc, -2px -2px 6px #cccccc;
+            width: 60px;
+            height: 60px;
+            float: left;
+            margin-right: 1%;
+        }
+        #member{
+            margin-top: 2.5%;
+            color: gray;
+        }
+        .btn {
+            border : none;
+            padding: 8px;
+            color: #fff;
+            background-color: #227daa;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <% include partials/menu.html %>
+    <div class="innerDiv">
+        <div class="header">
+            <button id="listBtn"><i class="fa fa-users"></i></button>
+            <button id="searchBtn"><i class="fa fa-search"></i></button>
+            <input type="search" placeholder="Search Community" id="searchInput">
+        </div>
+        <div class="content">
+            <%communityData.forEach(d => {%>
+            <div class="listItem">
+                <img src="/files/avtar.png" id="img">
+                <h3 id="name"><a href="/community/communityprofile/<%=d._id%>"><%=d.name%></a></h3>
+                <p id="member"><%=d.members%> Members</p>
+                <p id="desc"><%=d.desc%></p>
+                <button class="btn" id="<%=d._id%>">
+                    <% if(d.rule == "direct"){ %>
+                        Join
+                    <% } else{ %>  
+                        Ask To Join
+                    <% } %>
+                </button>
+            </div>
+            <%})%>
+        </div>
+    </div>
+    <% include partials/modal.html %>
+</body>
+<script src="/js/script.js"></script>
+<script
+src="https://code.jquery.com/jquery-3.4.1.min.js"
+integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+<script>
+    var listBtn = document.getElementById("listBtn");
+    var searchBtn = document.getElementById("searchBtn");
+    listBtn.addEventListener("click", function() {
+        window.location = "/communityPannel"
+    })
+    searchBtn.addEventListener("click", function() {
+        window.location = "/community/list"
+    })
+</script>
+</html>

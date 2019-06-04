@@ -71,6 +71,7 @@
             height: 30px;
             border: none;
             color: #fff;
+            cursor: pointer;
         }
         #create {
             margin-top: 4%;
@@ -80,6 +81,7 @@
             text-align: center;
             color: #fff;
             border: none;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -87,8 +89,8 @@
     <% include partials/menu.html %>
     <div class="innerDiv">
         <div class="header">
-            <button><i class="fa fa-users"></i></button>
-            <button><i class="fa fa-search"></i></button>
+            <button id="listBtn"><i class="fa fa-users"></i></button>
+            <button id="searchBtn"><i class="fa fa-search"></i></button>
         </div>
         <div class="content">
             <h2>Create Community</h2>
@@ -100,12 +102,15 @@
             <textarea id="textArea"></textarea>
             <br>
             <lebel class="radio">Rule: </lebel>
-            <input type="radio" class="radio" name="role">
+            <input type="radio" class="radio" name="role" id="direct" value="direct">
             <label class="radio">Direct: </label>
-            <input type="radio" class="radio" name="role">
+            <input type="radio" class="radio" name="role" id="permisson" value="permisson">
             <label class="radio">Permisson</label>
             <br>
-            <button id="upload">Upload Image</button>
+            <form action="/uploadCommunityImg" enctype="multipart/form-data" method="POST">
+                <input type="file" id="fileInput" accept="image/*" name="files">
+                <button id="upload" type="submit">Upload Image</button>
+            </form>
             <br>
             <button id="create">Create Community</button>
         </div>
@@ -124,5 +129,46 @@ crossorigin="anonymous"></script>
         $.trumbowyg.svgPath = "/css/trumbowyg.svg"
         $("#textArea").trumbowyg();
     });
+    var listBtn = document.getElementById("listBtn");
+    var searchBtn = document.getElementById("searchBtn");
+    listBtn.addEventListener("click", function() {
+        window.location = "/communityPannel";
+    })
+    searchBtn.addEventListener("click", function() {
+        window.location = "/community/list"
+    })
+    var create = document.getElementById("create");
+    var directRadio = document.getElementById("direct");
+    var permissonRadio = document.getElementById("permisson");
+    var fileInput = document.getElementById("fileInput");
+    var radioValue;
+    var dateObject = new Date();
+    var creationDate = dateObject.getDate() + "-" + dateObject.getMonth() + "-" + dateObject.getFullYear() + "  ( " + dateObject.getHours() + ":" + dateObject.getMinutes() + " )";
+    create.addEventListener("click", function() {
+        if(directRadio.checked) {
+            radioValue = directRadio.value;
+        } else {
+            radioValue = permissonRadio.value;
+        }
+        var data = new Object({
+            name: document.getElementById("textInput").value,
+            desc: document.getElementById("textArea").value,
+            rule: radioValue,
+            creationdate: creationDate,
+            imgpath: fileInput.value
+        });
+        var request = new XMLHttpRequest();
+        request.open("POST", "/community/addCommunity");
+        request.setRequestHeader("Content-Type", "application/json");
+        request.send(JSON.stringify(data));
+        request.onload = function() {
+            if(request.responseText == "1") {
+                alert("Community Added");
+                window.location.reload();
+            } else {
+                alert("Error in additon of community");
+            }
+        }
+    })
 </script>
 </html>

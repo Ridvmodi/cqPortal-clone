@@ -22,6 +22,8 @@ btn.addEventListener("click", function () {
 			} else {
 				if(returnedData[0].flag == "0")
 					window.location = '/404'
+				else if(returnedData[0].role == 'community builder') 
+					window.location ="/communityPannel"
 				else
 					window.location = '/home';
 			}

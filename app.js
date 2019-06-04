@@ -70,6 +70,20 @@ var tagSchema = mongoose.Schema({
 	creator: String 
 });
 
+var communitiesSchema = mongoose.Schema({
+	name: String,
+	email: String,
+	desc: String,
+	rule: String,
+	status: String,
+	members: String,
+	owner: String,
+	ownerid: String,
+	location: String,
+	creationdate: String,
+	imgpath: String,
+})
+
 var transporter = mailer.createTransport({
   service: 'gmail',
   auth: {
@@ -93,6 +107,21 @@ const upload = multer({
 		validateFile(file, callback)
 	}
 }).single('files');
+const communityStorageEngine = multer.diskStorage({
+	destination: './public/files/community/',
+  	filename: function (req, file, callback) {
+			var filePath = req.session.data[0]._id + path.extname(file.originalname);
+			req.session.data[0].communityImgpath = filePath;
+			callback(null, filePath)
+  }
+})
+const communityUpload = multer({
+	storage: communityStorageEngine,
+	limits: 1000000,
+	fileFilter: function(req, file, callback) {
+		validateFile(file, callback)
+	}
+}).single('files');
 
 function validateFile(file, callback) {
 	let extensions = ['jpg', 'png', 'gif', 'jpeg'];
@@ -107,6 +136,7 @@ function validateFile(file, callback) {
 
 var userDetails = mongoose.model("userdetails", userSchema);
 var tagObject = mongoose.model("tag", tagSchema);
+var communitiesObject = mongoose.model("communities", communitiesSchema);
 app.get('/', function (request, response) {
 	if(request.session.isLogin) {
 		console.log("already")
@@ -130,7 +160,7 @@ app.post('/login', function (request, response) {
 		request.session.data = data;
 		request.session.data.imgpath = "avtar.png"
 		response.send(data);
-	});
+	});	
 });
 app.get('/auth/github', passport.authenticate('github'))
 app.get('/auth/github/callback',passport.authenticate('github', { failureRedirect: '/' }),
@@ -248,20 +278,63 @@ app.post("/updateUser", function (request, response) {
 	});
 });
 app.get("/communityList", function (request, response) {
-	if(request.session.isLogin)
-		response.render('communityList', {data: request.session.data});
+	if(request.session.isLogin) {
+		communitiesObject.find({}).exec((error, communityData) => {
+			response.render('communityList', {communityData: communityData, data: request.session.data});
+		})
+	}
 	else 
 		response.redirect("/");
 })
 app.get('/communityPannel', function(request, response) {
-	if(request.session.isLogin)
-		response.render('communityPannel', {data: request.session.data});
+	if(request.session.isLogin) {
+		communitiesObject.find({}).then(data => {
+			response.render('communityPannel', {data: request.session.data, communityData: data});
+		})
+	}
 	else 
 		response.redirect("/");
 })
 app.get("/community/addCommunity", function(request, response) {
 	if(request.session.isLogin)
 		response.render('addCommunity', {data: request.session.data});
+	else 
+		response.redirect("/");
+})
+app.post("/community/addCommunity", function(request, response) {
+	var communityData = new communitiesObject({
+		name: request.body.name,
+		email: request.session.data[0].email,
+		desc: request.body.desc,
+		rule: request.body.rule,
+		status: "Active",
+		members: 0,
+		owner: request.session.data[0].role,
+		ownerid: request.session.data[0]._id,
+		location: "Not Added",
+		creationdate: request.body.creationdate,
+		imgpath: request.body.imgpath
+	});
+	communityData.save().then( data => {
+		console.log("Community Added");
+		response.send("1");
+	})
+})
+app.get("/community/list", function(request, response) {
+	if(request.session.isLogin) {
+		communitiesObject.find({}).exec((error, d) => {
+			response.render('searchCommunity', {data: request.session.data, communityData: d});
+		})
+	}
+	else 
+		response.redirect("/");
+})
+app.get("/community/communityprofile/:id", function(request, response) {
+	if(request.session.isLogin) {
+		communitiesObject.find({_id: request.params.id}).exec((error, d) => {
+			response.render('communityProfile', {data: request.session.data, communityData: d});
+		})
+	}
 	else 
 		response.redirect("/");
 })
@@ -365,6 +438,22 @@ app.post("/uploadImg", function(request, response) {
 			console.log("new page rendered");
 			console.log(request.session.data)
 			response.render("editProfile", {data: request.session.data});
+		}
+	});
+});
+app.post("/uploadCommunityImg", function(request, response) {
+	console.log("community image req rec");
+	communityUpload(request, response, (error) => {
+		console.log(request.file);
+		if(error) {
+			console.log("error page ");
+			response.render('addCommunity', {msg: error});
+		} else if(request.file == undefined) {
+			console.log("file undefined")
+			response.render('addCommunity',  {msg: "No file selected"});
+		} else {
+			console.log("new page rendered");
+			console.log(request.session.data)
 		}
 	});
 });

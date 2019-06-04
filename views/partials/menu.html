@@ -39,6 +39,12 @@
 			console.log("hey")
 			menu.style.display = "block";
 		}
-	}
-	
+	} else if(dbData.role == "community builder") {
+		sideBtns[4].childNodes[0].classList.remove("fa-list-alt");
+		sideBtns[4].childNodes[0].classList.add("fa-group");
+		sideBtns[2].style.display = "none";
+		sideBtns[3].style.display = "none";
+		sideBtns[5].style.display = "none";
+		sideBtns[6].style.display = "none";
+	}	
 </script>
